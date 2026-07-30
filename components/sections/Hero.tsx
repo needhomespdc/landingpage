@@ -25,7 +25,7 @@ export function Hero() {
       </div>
 
       {/* Content */}
-      <div className="relative mx-auto max-w-[300] px-4 md:px-6 lg:px-8 py-20 md:py-28">
+      <div className="relative mx-auto max-w-[800] px-4 md:px-6 lg:px-8 py-20 md:py-28">
         <div className="max-w-xl space-y-6">
           <h1 className="text-4xl md:text-5xl font-bold leading-[1.15]">
             Your Smooth Journey<br />to Property<br />Ownership.
