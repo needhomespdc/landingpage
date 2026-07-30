@@ -9,7 +9,7 @@ import { HomeHowItWorks } from '@/components/sections/HomeHowItWorks';
 import { ProfessionalMembership } from '@/components/sections/ProfessionalMembership';
 import { HomeFAQ } from '@/components/sections/HomeFAQ';
 import { DownloadApp } from '@/components/sections/DownloadApp';
-import { Newsletter } from '@/components/sections/Newsletter';
+// import { Newsletter } from '@/components/sections/Newsletter';
 
 export const metadata: Metadata = {
   title: 'NeedHomes — Your Smooth Journey to Property Ownership',
