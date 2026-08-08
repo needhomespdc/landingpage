@@ -3,8 +3,9 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useState, useRef, useEffect } from 'react';
 import { RiMenuLine, RiCloseLine, RiArrowDownSLine } from 'react-icons/ri';
-import { NAV_LINKS, APP_URL } from '@/lib/constants';
+import { NAV_LINKS } from '@/lib/constants';
 import { cn } from '@/lib/utils';
+import { WaitlistModal } from '@/components/shared/WaitlistModal';
 
 const dropdownGroups = [
   { key: 'company',    label: 'Company',    items: NAV_LINKS.company },
@@ -35,6 +36,7 @@ export function Navbar() {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileExpanded, setMobileExpanded] = useState<string | null>(null);
+  const [waitlistOpen, setWaitlistOpen] = useState(false);
   const navRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -48,12 +50,16 @@ export function Navbar() {
     return () => document.removeEventListener('mousedown', handleClick);
   }, []);
 
+  const openWaitlist = () => {
+    setMobileOpen(false);
+    setWaitlistOpen(true);
+  };
+
   return (
-    <nav ref={navRef} className="sticky top-0 z-50 bg-[#2A2C2E] shadow-md">
+    <nav ref={navRef} className="sticky top-0 z-50 bg-black shadow-md">
       <div className="mx-auto max-w-[1200px] px-4 md:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 shrink-0">
+        <div className="flex h-16 items-center justify-between">
+          <Link href="/" className="flex shrink-0 items-center gap-2">
             <Image
               src="/logo/logo-hero-white.png"
               alt="NeedHomes"
@@ -64,8 +70,7 @@ export function Navbar() {
             />
           </Link>
 
-          {/* Desktop nav */}
-          <div className="hidden lg:flex items-center gap-1">
+          <div className="hidden items-center gap-1 lg:flex">
             {dropdownGroups.map((group) => (
               <div
                 key={group.key}
@@ -73,59 +78,62 @@ export function Navbar() {
                 onMouseEnter={() => setOpenDropdown(group.key)}
                 onMouseLeave={() => setOpenDropdown(null)}
               >
-                <button className="flex items-center gap-1 px-3 py-2 text-sm text-white/90 hover:text-white font-medium transition-colors">
+                <button className="flex items-center gap-1 px-3 py-2 text-sm font-medium text-white/90 transition-colors hover:text-white">
                   {group.label}
-                  <RiArrowDownSLine className={cn('w-4 h-4 transition-transform duration-200', openDropdown === group.key && 'rotate-180')} />
+                  <RiArrowDownSLine className={cn('h-4 w-4 transition-transform duration-200', openDropdown === group.key && 'rotate-180')} />
                 </button>
                 <DropdownMenu items={group.items} isOpen={openDropdown === group.key} />
               </div>
             ))}
-            <Link href="/marketplace" className="px-3 py-2 text-sm text-white/90 hover:text-white font-medium transition-colors">
+            <Link href="/marketplace" className="px-3 py-2 text-sm font-medium text-white/90 transition-colors hover:text-white">
               Marketplace
             </Link>
-            <Link href="/contact" className="px-3 py-2 text-sm text-white/90 hover:text-white font-medium transition-colors">
+            <Link href="/contact" className="px-3 py-2 text-sm font-medium text-white/90 transition-colors hover:text-white">
               Contact Us
             </Link>
           </div>
 
-          {/* Desktop CTA */}
-          <div className="hidden lg:flex items-center gap-3">
-            <a
-              href={APP_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-5 py-2 bg-[#E55820] hover:bg-[#C44A15] text-white text-sm font-semibold rounded-md transition-colors"
+          <div className="hidden items-center gap-3 lg:flex">
+            <button
+              type="button"
+              onClick={openWaitlist}
+              className="rounded-md border border-white/60 px-5 py-2 text-sm font-semibold text-white transition-all duration-200 hover:border-white hover:bg-white hover:text-[#2A2C2E]"
+            >
+              Download App
+            </button>
+            <button
+              type="button"
+              onClick={openWaitlist}
+              className="rounded-md bg-[#E55820] px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#C44A15]"
             >
               Get Started
-            </a>
+            </button>
           </div>
 
-          {/* Mobile hamburger */}
           <button
-            className="lg:hidden p-2 text-white"
+            className="p-2 text-white lg:hidden"
             onClick={() => setMobileOpen((o) => !o)}
             aria-label="Toggle menu"
           >
-            {mobileOpen ? <RiCloseLine className="w-6 h-6" /> : <RiMenuLine className="w-6 h-6" />}
+            {mobileOpen ? <RiCloseLine className="h-6 w-6" /> : <RiMenuLine className="h-6 w-6" />}
           </button>
         </div>
       </div>
 
-      {/* Mobile menu */}
       {mobileOpen && (
-        <div className="lg:hidden bg-[#1E2022] border-t border-white/10">
-          <div className="px-4 py-4 space-y-1">
+        <div className="border-t border-white/10 bg-black lg:hidden">
+          <div className="space-y-1 px-4 py-4">
             {dropdownGroups.map((group) => (
               <div key={group.key}>
                 <button
-                  className="flex items-center justify-between w-full px-3 py-2.5 text-white/90 font-medium text-sm"
+                  className="flex w-full items-center justify-between px-3 py-2.5 text-sm font-medium text-white/90"
                   onClick={() => setMobileExpanded(mobileExpanded === group.key ? null : group.key)}
                 >
                   {group.label}
-                  <RiArrowDownSLine className={cn('w-4 h-4 transition-transform', mobileExpanded === group.key && 'rotate-180')} />
+                  <RiArrowDownSLine className={cn('h-4 w-4 transition-transform', mobileExpanded === group.key && 'rotate-180')} />
                 </button>
                 {mobileExpanded === group.key && (
-                  <div className="pl-4 space-y-1 pb-2">
+                  <div className="space-y-1 pb-2 pl-4">
                     {group.items.map((item) => (
                       <Link
                         key={item.href}
@@ -140,25 +148,33 @@ export function Navbar() {
                 )}
               </div>
             ))}
-            <Link href="/marketplace" className="block px-3 py-2.5 text-white/90 font-medium text-sm" onClick={() => setMobileOpen(false)}>
+            <Link href="/marketplace" className="block px-3 py-2.5 text-sm font-medium text-white/90" onClick={() => setMobileOpen(false)}>
               Marketplace
             </Link>
-            <Link href="/contact" className="block px-3 py-2.5 text-white/90 font-medium text-sm" onClick={() => setMobileOpen(false)}>
+            <Link href="/contact" className="block px-3 py-2.5 text-sm font-medium text-white/90" onClick={() => setMobileOpen(false)}>
               Contact Us
             </Link>
-            <div className="pt-3">
-              <a
-                href={APP_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block w-full text-center px-5 py-2.5 bg-[#E55820] hover:bg-[#C44A15] text-white text-sm font-semibold rounded-md transition-colors"
+            <div className="space-y-2 pt-3">
+              <button
+                type="button"
+                onClick={openWaitlist}
+                className="block w-full rounded-md border border-white/60 px-5 py-2.5 text-center text-sm font-semibold text-white transition-all duration-200 hover:border-white hover:bg-white hover:text-[#2A2C2E]"
+              >
+                Download App
+              </button>
+              <button
+                type="button"
+                onClick={openWaitlist}
+                className="block w-full rounded-md bg-[#E55820] px-5 py-2.5 text-center text-sm font-semibold text-white transition-colors hover:bg-[#C44A15]"
               >
                 Get Started
-              </a>
+              </button>
             </div>
           </div>
         </div>
       )}
+
+      <WaitlistModal open={waitlistOpen} onOpenChange={setWaitlistOpen} />
     </nav>
   );
 }

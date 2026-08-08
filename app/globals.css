@@ -74,3 +74,23 @@ body {
     @apply mx-auto w-full max-w-300 px-4 md:px-6 lg:px-8;
   }
 }
+
+/* Partners logo marquee — moves left → right, seamless loop */
+@keyframes partners-marquee {
+  from {
+    transform: translateX(-50%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.animate-partners-marquee {
+  animation: partners-marquee 40s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-partners-marquee {
+    animation: none;
+  }
+}

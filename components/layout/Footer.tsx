@@ -44,6 +44,38 @@ export function Footer() {
                 <RiYoutubeLine className="w-5 h-5" />
               </a>
             </div>
+            <div className="flex flex-wrap items-center gap-3 pt-2">
+              <a
+                href="https://apps.apple.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block transition-opacity hover:opacity-90"
+                aria-label="Download on the App Store"
+              >
+                <Image
+                  src="/logo/apple.png"
+                  alt="Download on the App Store"
+                  width={140}
+                  height={42}
+                  className="h-10 w-auto"
+                />
+              </a>
+              <a
+                href="https://play.google.com/store/apps/details?id=com.needhomes.need_homes"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block transition-opacity hover:opacity-90"
+                aria-label="Get it on Google Play"
+              >
+                <Image
+                  src="/logo/google.png"
+                  alt="Get it on Google Play"
+                  width={150}
+                  height={42}
+                  className="h-10 w-auto"
+                />
+              </a>
+            </div>
           </div>
 
           {/* Company links */}
