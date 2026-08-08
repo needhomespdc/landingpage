@@ -29,7 +29,7 @@ export function Hero() {
         <div className="absolute inset-0 bg-linear-to-r from-[#1A1A1A] via-[#1A1A1A]/80 to-[#1A1A1A]/30" />
       </div>
 
-      <div className="relative mx-auto max-w-[800] px-4 py-20 md:px-6 md:py-28 lg:px-8">
+      <div className="relative mx-auto max-w-[1200px] px-4 py-20 md:px-6 md:py-28 lg:px-8">
         <div className="max-w-xl space-y-6">
           <h1 className="text-4xl font-bold leading-[1.15] md:text-5xl">
             Your Smooth Journey
@@ -38,7 +38,7 @@ export function Hero() {
             <br />
             Ownership.
           </h1>
-          <ul className="space-y-3">
+          <ul className="list-none space-y-3 p-0">
             {highlights.map((text, i) => (
               <li key={i} className="flex items-start gap-3">
                 <RiCheckboxCircleFill className="mt-0.5 h-5 w-5 shrink-0 text-[#E55820]" />
