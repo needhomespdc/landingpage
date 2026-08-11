@@ -1,6 +1,11 @@
 import type { Metadata } from 'next';
 import { RiGridLine, RiTimeLine, RiLineChartLine, RiShieldCheckLine, RiGroupLine, RiArrowLeftRightLine } from 'react-icons/ri';
 import { InvestmentPageTemplate } from '@/components/shared/InvestmentPageTemplate';
+import { FractionalHero } from '@/components/sections/fractional/FractionalHero';
+import { FractionalAbout } from '@/components/sections/fractional/FractionalAbout';
+import { FractionalHowItWorks } from '@/components/sections/fractional/FractionalHowItWorks';
+import { FractionalPerfectFor } from '@/components/sections/fractional/FractionalPerfectFor';
+import { FractionalCta } from '@/components/sections/fractional/FractionalCta';
 
 export const metadata: Metadata = { title: 'Fractional Ownership' };
 
@@ -45,6 +50,11 @@ export default function FractionalOwnershipPage() {
       sideImageAlt="Multiple hands pointing at property chart representing fractional ownership"
       ctaTitle="Ready to Start Your Investment Journey?"
       ctaSubtitle="Join thousands of investors who are building wealth through fractional property ownership"
+      customHero={<FractionalHero />}
+      customAfterHero={<FractionalAbout />}
+      customHowItWorks={<FractionalHowItWorks />}
+      customKeyBenefits={<FractionalPerfectFor />}
+      customCta={<FractionalCta />}
     />
   );
 }

@@ -3,14 +3,13 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useState, useRef, useEffect } from 'react';
 import { RiMenuLine, RiCloseLine, RiArrowDownSLine } from 'react-icons/ri';
-import { NAV_LINKS } from '@/lib/constants';
+import { NAV_LINKS, BLOG_URL } from '@/lib/constants';
 import { cn } from '@/lib/utils';
 import { WaitlistModal } from '@/components/shared/WaitlistModal';
 
 const dropdownGroups = [
   { key: 'company',    label: 'Company',    items: NAV_LINKS.company },
   { key: 'investment', label: 'Investment', items: NAV_LINKS.investment },
-  { key: 'resources',  label: 'Resources',  items: NAV_LINKS.resources },
 ] as const;
 
 function DropdownMenu({ items, isOpen }: { items: readonly { label: string; href: string }[]; isOpen: boolean }) {
@@ -88,6 +87,14 @@ export function Navbar() {
             <Link href="/marketplace" className="px-3 py-2 text-sm font-medium text-white/90 transition-colors hover:text-white">
               Marketplace
             </Link>
+            <a
+              href={BLOG_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-3 py-2 text-sm font-medium text-white/90 transition-colors hover:text-white"
+            >
+              Blog
+            </a>
             <Link href="/contact" className="px-3 py-2 text-sm font-medium text-white/90 transition-colors hover:text-white">
               Contact Us
             </Link>
@@ -151,6 +158,15 @@ export function Navbar() {
             <Link href="/marketplace" className="block px-3 py-2.5 text-sm font-medium text-white/90" onClick={() => setMobileOpen(false)}>
               Marketplace
             </Link>
+            <a
+              href={BLOG_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block px-3 py-2.5 text-sm font-medium text-white/90"
+              onClick={() => setMobileOpen(false)}
+            >
+              Blog
+            </a>
             <Link href="/contact" className="block px-3 py-2.5 text-sm font-medium text-white/90" onClick={() => setMobileOpen(false)}>
               Contact Us
             </Link>

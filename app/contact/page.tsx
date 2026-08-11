@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import Image from 'next/image';
 import { RiMapPinLine, RiPhoneLine, RiMailLine, RiWhatsappLine, RiTimeLine } from 'react-icons/ri';
 import { CONTACT } from '@/lib/constants';
 
@@ -15,11 +16,24 @@ export default function ContactPage() {
   return (
     <>
       {/* Hero */}
-      <section className="bg-[#333D42] text-white py-16 md:py-20">
-        <div className="mx-auto max-w-[1200px] px-4 md:px-6 lg:px-8">
-          <h1 className="text-4xl md:text-5xl font-bold">
-            Contact us<span className="text-[#E55820]">.</span>
-          </h1>
+      <section className="overflow-hidden bg-black text-white">
+        <div className="mx-auto grid max-w-[1200px] grid-cols-1 items-end gap-6 px-4 lg:grid-cols-2 lg:gap-10 lg:px-8">
+          <div className="pt-10 pb-10 md:pt-12 md:pb-12 lg:pt-14 lg:pb-14">
+            <h1 className="text-4xl font-bold md:text-5xl">
+              Contact us<span className="text-[#E55820]">.</span>
+            </h1>
+          </div>
+          <div className="mx-auto w-full max-w-[240px] sm:max-w-[280px] lg:mx-0 lg:ml-auto lg:max-w-[320px]">
+            <Image
+              src="/images/contact/contact.png"
+              alt="NeedHomes support representative ready to help"
+              width={1536}
+              height={1024}
+              priority
+              className="h-auto w-full"
+              sizes="(max-width: 1024px) 280px, 320px"
+            />
+          </div>
         </div>
       </section>
 
@@ -43,21 +57,21 @@ export default function ContactPage() {
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                <div className="bg-[#2A2C2E] rounded-xl p-5">
-                  <h3 className="text-white font-semibold text-sm mb-3">Phone & WhatsApp</h3>
-                  <a href={`tel:${CONTACT.phone.replace(/\s/g, '')}`} className="flex items-center gap-2 text-gray-300 text-sm hover:text-white transition-colors mb-2">
-                    <RiPhoneLine className="w-4 h-4 text-[#E55820]" />
+                <div className="rounded-xl bg-gray-50 p-5">
+                  <h3 className="mb-3 text-sm font-semibold text-[#1A1A1A]">Phone & WhatsApp</h3>
+                  <a href={`tel:${CONTACT.phone.replace(/\s/g, '')}`} className="mb-2 flex items-center gap-2 text-sm text-gray-600 transition-colors hover:text-[#1A1A1A]">
+                    <RiPhoneLine className="h-4 w-4 text-[#E55820]" />
                     {CONTACT.phone}
                   </a>
-                  <a href={CONTACT.whatsapp} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-gray-300 text-sm hover:text-white transition-colors">
-                    <RiWhatsappLine className="w-4 h-4 text-[#E55820]" />
+                  <a href={CONTACT.whatsapp} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-gray-600 transition-colors hover:text-[#1A1A1A]">
+                    <RiWhatsappLine className="h-4 w-4 text-[#E55820]" />
                     WhatsApp
                   </a>
                 </div>
-                <div className="bg-[#2A2C2E] rounded-xl p-5">
-                  <h3 className="text-white font-semibold text-sm mb-3">Email</h3>
-                  <a href={`mailto:${CONTACT.email}`} className="flex items-center gap-2 text-gray-300 text-sm hover:text-white transition-colors">
-                    <RiMailLine className="w-4 h-4 text-[#E55820]" />
+                <div className="rounded-xl bg-gray-50 p-5">
+                  <h3 className="mb-3 text-sm font-semibold text-[#1A1A1A]">Email</h3>
+                  <a href={`mailto:${CONTACT.email}`} className="flex items-center gap-2 text-sm text-gray-600 transition-colors hover:text-[#1A1A1A]">
+                    <RiMailLine className="h-4 w-4 text-[#E55820]" />
                     {CONTACT.email}
                   </a>
                 </div>
@@ -65,77 +79,77 @@ export default function ContactPage() {
             </div>
 
             {/* Right form */}
-            <div className="bg-[#2A2C2E] rounded-2xl p-8">
-              <h2 className="text-white text-xl font-bold mb-6">
+            <div className="rounded-2xl bg-gray-50 p-8">
+              <h2 className="mb-6 text-xl font-bold text-[#1A1A1A]">
                 Send a message<span className="text-[#E55820]">.</span>
               </h2>
               {sent ? (
-                <div className="text-center py-8">
-                  <p className="text-[#E55820] text-lg font-semibold">Message sent!</p>
-                  <p className="text-gray-400 text-sm mt-2">We&apos;ll get back to you shortly.</p>
+                <div className="py-8 text-center">
+                  <p className="text-lg font-semibold text-[#E55820]">Message sent!</p>
+                  <p className="mt-2 text-sm text-gray-500">We&apos;ll get back to you shortly.</p>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="text-gray-400 text-xs font-medium mb-1 block">FIRST NAME *</label>
+                      <label className="mb-1 block text-xs font-medium text-gray-500">FIRST NAME *</label>
                       <input
                         type="text"
                         required
                         value={form.firstName}
                         onChange={(e) => setForm({ ...form, firstName: e.target.value })}
-                        className="w-full bg-[#1E2022] border border-white/10 rounded-md px-3 py-2.5 text-white text-sm focus:outline-none focus:border-[#E55820]"
+                        className="w-full rounded-md border border-gray-200 bg-white px-3 py-2.5 text-sm text-[#1A1A1A] focus:border-[#E55820] focus:outline-none"
                       />
                     </div>
                     <div>
-                      <label className="text-gray-400 text-xs font-medium mb-1 block">LAST NAME *</label>
+                      <label className="mb-1 block text-xs font-medium text-gray-500">LAST NAME *</label>
                       <input
                         type="text"
                         required
                         value={form.lastName}
                         onChange={(e) => setForm({ ...form, lastName: e.target.value })}
-                        className="w-full bg-[#1E2022] border border-white/10 rounded-md px-3 py-2.5 text-white text-sm focus:outline-none focus:border-[#E55820]"
+                        className="w-full rounded-md border border-gray-200 bg-white px-3 py-2.5 text-sm text-[#1A1A1A] focus:border-[#E55820] focus:outline-none"
                       />
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="text-gray-400 text-xs font-medium mb-1 block">TELEPHONE NO *</label>
+                      <label className="mb-1 block text-xs font-medium text-gray-500">TELEPHONE NO *</label>
                       <input
                         type="tel"
                         required
                         value={form.phone}
                         onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                        className="w-full bg-[#1E2022] border border-white/10 rounded-md px-3 py-2.5 text-white text-sm focus:outline-none focus:border-[#E55820]"
+                        className="w-full rounded-md border border-gray-200 bg-white px-3 py-2.5 text-sm text-[#1A1A1A] focus:border-[#E55820] focus:outline-none"
                       />
                     </div>
                     <div>
-                      <label className="text-gray-400 text-xs font-medium mb-1 block">EMAIL ADDRESS *</label>
+                      <label className="mb-1 block text-xs font-medium text-gray-500">EMAIL ADDRESS *</label>
                       <input
                         type="email"
                         required
                         value={form.email}
                         onChange={(e) => setForm({ ...form, email: e.target.value })}
-                        className="w-full bg-[#1E2022] border border-white/10 rounded-md px-3 py-2.5 text-white text-sm focus:outline-none focus:border-[#E55820]"
+                        className="w-full rounded-md border border-gray-200 bg-white px-3 py-2.5 text-sm text-[#1A1A1A] focus:border-[#E55820] focus:outline-none"
                       />
                     </div>
                   </div>
                   <div>
-                    <label className="text-gray-400 text-xs font-medium mb-1 block">YOUR MESSAGE</label>
+                    <label className="mb-1 block text-xs font-medium text-gray-500">YOUR MESSAGE</label>
                     <textarea
                       rows={5}
                       value={form.message}
                       onChange={(e) => setForm({ ...form, message: e.target.value })}
-                      className="w-full bg-[#1E2022] border border-white/10 rounded-md px-3 py-2.5 text-white text-sm focus:outline-none focus:border-[#E55820] resize-none"
+                      className="w-full resize-none rounded-md border border-gray-200 bg-white px-3 py-2.5 text-sm text-[#1A1A1A] focus:border-[#E55820] focus:outline-none"
                     />
                   </div>
-                  <p className="text-gray-500 text-xs leading-relaxed">
+                  <p className="text-xs leading-relaxed text-gray-500">
                     By providing your name, phone number and email you consent to NeedHomes Property Investment Limited&apos;s use of your personal data in accordance with the{' '}
                     <a href="/privacy-policy" className="text-[#E55820] hover:underline">Privacy Policy</a>.
                   </p>
                   <button
                     type="submit"
-                    className="w-full py-3 bg-[#E55820] hover:bg-[#C44A15] text-white font-bold rounded-md transition-colors"
+                    className="w-full rounded-md bg-[#E55820] py-3 font-bold text-white transition-colors hover:bg-[#C44A15]"
                   >
                     Send Message
                   </button>

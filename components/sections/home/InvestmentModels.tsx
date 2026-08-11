@@ -11,19 +11,22 @@ const MODELS = [
   },
   {
     title: 'Land Banking',
-    description: 'Invest in verified lands in high-growth locations.',
+    description:
+      'Buy land in promising locations, hold it, and benefit from future value appreciation',
     href: '/investment/land-banking',
     image: '/images/investment-models/landbankin.png',
   },
   {
     title: 'Save to Own',
-    description: 'Save gradually and own your dream property hassle-free.',
+    description:
+      'Pay gradually toward a property and become the full owner',
     href: '/investment/save-to-own',
     image: '/images/investment-models/savetoown.png',
   },
   {
     title: 'Co-development',
-    description: 'Partner with us on profitable real estate development projects.',
+    description:
+      'Co-fund verified real estate projects and own appreciated property upon completion',
     href: '/investment/co-development',
     image: '/images/investment-models/codevelop.png',
   },

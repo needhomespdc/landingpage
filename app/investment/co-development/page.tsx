@@ -1,6 +1,11 @@
 import type { Metadata } from 'next';
 import { RiGroupLine, RiMapPinLine, RiLineChartLine, RiShieldCheckLine, RiUserSettingsLine, RiBuilding2Line } from 'react-icons/ri';
 import { InvestmentPageTemplate } from '@/components/shared/InvestmentPageTemplate';
+import { InvestmentDarkHero } from '@/components/sections/investment/InvestmentDarkHero';
+import { InvestmentDarkCta } from '@/components/sections/investment/InvestmentDarkCta';
+import { CoDevelopmentAbout } from '@/components/sections/co-development/CoDevelopmentAbout';
+import { CoDevelopmentHowItWorks } from '@/components/sections/co-development/CoDevelopmentHowItWorks';
+import { CoDevelopmentWhyUs } from '@/components/sections/co-development/CoDevelopmentWhyUs';
 
 export const metadata: Metadata = { title: 'Co-Development' };
 
@@ -45,6 +50,25 @@ export default function CoDevelopmentPage() {
       sideImageAlt="Construction team working on a building project representing co-development"
       ctaTitle="Ready to Partner in Development?"
       ctaSubtitle="Join successful investors who are building wealth through strategic co-development partnerships"
+      customHero={
+        <InvestmentDarkHero
+          badge="Co-Development"
+          titleLine1="Co-fund verified real estate projects"
+          titleBeforeRotate="and grow"
+          rotatingWords={['wealth', 'returns']}
+          titleAfterRotate="together."
+          subtitle="Partner with other investors to fund property projects from conception to completion — Higher returns, lower risk." 
+        />
+      }
+      customAfterHero={<CoDevelopmentAbout />}
+      customHowItWorks={<CoDevelopmentHowItWorks />}
+      customKeyBenefits={<CoDevelopmentWhyUs />}
+      customCta={
+        <InvestmentDarkCta
+          title="Ready to Partner in Development?"
+          subtitle="Join successful investors who are building wealth through strategic co-development partnerships"
+        />
+      }
     />
   );
 }

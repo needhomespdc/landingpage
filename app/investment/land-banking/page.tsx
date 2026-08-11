@@ -1,6 +1,11 @@
 import type { Metadata } from 'next';
 import { RiLineChartLine, RiHome2Line, RiMapPinLine, RiShieldCheckLine, RiTimeLine, RiMapPin2Line } from 'react-icons/ri';
 import { InvestmentPageTemplate } from '@/components/shared/InvestmentPageTemplate';
+import { InvestmentDarkHero } from '@/components/sections/investment/InvestmentDarkHero';
+import { InvestmentDarkCta } from '@/components/sections/investment/InvestmentDarkCta';
+import { LandBankingAbout } from '@/components/sections/land-banking/LandBankingAbout';
+import { LandBankingHowItWorks } from '@/components/sections/land-banking/LandBankingHowItWorks';
+import { LandBankingBenefits } from '@/components/sections/land-banking/LandBankingBenefits';
 
 export const metadata: Metadata = { title: 'Land Banking' };
 
@@ -43,8 +48,27 @@ export default function LandBankingPage() {
       benefitsList={benefits}
       sideImage="/images/properties/land-banking.jpg"
       sideImageAlt="Hand placing coins on grass representing land banking investment"
-      ctaTitle="Ready to Secure Your Land Investment?"
-      ctaSubtitle="Join smart investors who are building generational wealth through strategic land banking"
+      ctaTitle="Ready to Bank on Land Appreciation?"
+      ctaSubtitle="Join investors who are building wealth by holding strategic land over time"
+      customHero={
+        <InvestmentDarkHero
+          badge="Land Banking"
+          titleLine1="Invest in land today"
+          titleBeforeRotate="and grow"
+          rotatingWords={['wealth', 'value', 'equity']}
+          titleAfterRotate="over time."
+          subtitle="Acquire verified land in high-growth corridors, hold it through the appreciation cycle, and exit when the value has compounded — patient capital, lasting returns."
+        />
+      }
+      customAfterHero={<LandBankingAbout />}
+      customHowItWorks={<LandBankingHowItWorks />}
+      customKeyBenefits={<LandBankingBenefits />}
+      customCta={
+        <InvestmentDarkCta
+          title="Ready to Bank on Land Appreciation?"
+          subtitle="Join investors who are building wealth by holding strategic land over time"
+        />
+      }
     />
   );
 }

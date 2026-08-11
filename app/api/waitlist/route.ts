@@ -1,10 +1,7 @@
 import { NextResponse } from 'next/server';
 
 type WaitlistPayload = {
-  firstName?: string;
-  lastName?: string;
   email?: string;
-  whatsapp?: string;
 };
 
 function isValidEmail(email: string): boolean {
@@ -20,14 +17,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ message: 'Invalid request body.' }, { status: 400 });
   }
 
-  const firstName = body.firstName?.trim() ?? '';
-  const lastName = body.lastName?.trim() ?? '';
   const email = body.email?.trim() ?? '';
-  const whatsapp = body.whatsapp?.trim() ?? '';
 
-  if (!firstName || !lastName || !email || !whatsapp) {
+  if (!email) {
     return NextResponse.json(
-      { message: 'Please fill in all fields.' },
+      { message: 'Please enter your email.' },
       { status: 400 }
     );
   }
@@ -40,7 +34,7 @@ export async function POST(request: Request) {
   }
 
   // Persist later (CRM / email / DB). For now acknowledge a valid signup.
-  console.info('[waitlist]', { firstName, lastName, email, whatsapp });
+  console.info('[waitlist]', { email });
 
   return NextResponse.json({
     ok: true,

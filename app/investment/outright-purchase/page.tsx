@@ -1,6 +1,11 @@
 import type { Metadata } from 'next';
 import { RiKey2Line, RiShieldCheckLine, RiLineChartLine, RiVipCrownLine, RiHome2Line, RiCheckLine } from 'react-icons/ri';
 import { InvestmentPageTemplate } from '@/components/shared/InvestmentPageTemplate';
+import { InvestmentDarkHero } from '@/components/sections/investment/InvestmentDarkHero';
+import { InvestmentDarkCta } from '@/components/sections/investment/InvestmentDarkCta';
+import { OutrightPurchaseAbout } from '@/components/sections/outright-purchase/OutrightPurchaseAbout';
+import { OutrightPurchaseHowItWorks } from '@/components/sections/outright-purchase/OutrightPurchaseHowItWorks';
+import { OutrightPurchaseBenefits } from '@/components/sections/outright-purchase/OutrightPurchaseBenefits';
 
 export const metadata: Metadata = { title: 'Outright Purchase' };
 
@@ -43,8 +48,27 @@ export default function OutrightPurchasePage() {
       benefitsList={benefits}
       sideImage="/images/properties/outright-purchase.jpg"
       sideImageAlt="Modern apartment complex for outright purchase"
-      ctaTitle="Ready to Own Your Dream Property?"
-      ctaSubtitle="Join successful property owners who have secured their future through outright purchase"
+      ctaTitle="Ready to Own Your Dream Home?"
+      ctaSubtitle="Join buyers who chose full ownership with verified properties and a clear path to possession"
+      customHero={
+        <InvestmentDarkHero
+          badge="Outright Purchase"
+          titleLine1="Buy a verified property"
+          titleBeforeRotate="and own it"
+          rotatingWords={['outright', 'fully', 'today']}
+          titleAfterRotate="."
+          subtitle="Purchase ready homes with clear titles, take full ownership, and enjoy complete control to live in, rent out, or hold for appreciation."
+        />
+      }
+      customAfterHero={<OutrightPurchaseAbout />}
+      customHowItWorks={<OutrightPurchaseHowItWorks />}
+      customKeyBenefits={<OutrightPurchaseBenefits />}
+      customCta={
+        <InvestmentDarkCta
+          title="Ready to Own Your Dream Home?"
+          subtitle="Join buyers who chose full ownership with verified properties and a clear path to possession"
+        />
+      }
     />
   );
 }

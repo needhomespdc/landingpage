@@ -5,9 +5,12 @@ import Link from 'next/link';
 import { RiMapPinLine } from 'react-icons/ri';
 import {
   MODEL_BADGE_STYLES,
-  formatNaira,
+  MODEL_CARD_BADGE_LABELS,
+  MODEL_PRICE_LABELS,
+  formatNairaCompact,
   type FeaturedProperty,
 } from '@/data/featured-properties';
+import { HotSellingBadge } from '@/components/shared/HotSellingBadge';
 import { cn } from '@/lib/utils';
 
 type PropertyCardProps = {
@@ -18,9 +21,12 @@ type PropertyCardProps = {
 export function PropertyCard({ property, className }: PropertyCardProps) {
   const badge =
     MODEL_BADGE_STYLES[property.model] ?? MODEL_BADGE_STYLES.fractional;
+  const badgeLabel =
+    MODEL_CARD_BADGE_LABELS[property.model] ?? property.modelLabel;
+  const priceLabel =
+    MODEL_PRICE_LABELS[property.model] ?? 'Min. Investment';
   const isRemoteImage = property.imageSrc.startsWith('http');
-  const showProgress =
-    property.model !== 'outright' && property.model !== 'land_banking';
+  const stats = property.listingStats ?? [];
 
   return (
     <article
@@ -38,17 +44,13 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 20vw"
           unoptimized={isRemoteImage}
         />
-        <div className="absolute left-3 top-3 flex flex-wrap gap-1.5">
+        <div className="absolute left-3 top-3 flex flex-wrap items-center gap-1.5">
           <span
             className={`rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-white ${badge.bg}`}
           >
-            {property.modelLabel}
+            {badgeLabel}
           </span>
-          {property.isHotSelling ? (
-            <span className="rounded-full bg-black/75 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-white">
-              Hot
-            </span>
-          ) : null}
+          {property.isHotSelling ? <HotSellingBadge size={22} /> : null}
           {property.isNewListing ? (
             <span className="rounded-full bg-white/95 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-[#1A1A1A]">
               New
@@ -68,41 +70,41 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
           <span className="truncate">{property.location}</span>
         </p>
 
-        <div className="mt-4 grid grid-cols-2 gap-3">
-          <div>
-            <p className="text-[11px] text-[#888888]">Min. Investment</p>
-            <p className="mt-0.5 text-sm font-bold text-[#1A1A1A]">
-              {formatNaira(property.minInvestment)}
-            </p>
-          </div>
-          <div>
-            <p className="text-[11px] text-[#888888]">Projected Return</p>
-            <p className="mt-0.5 text-sm font-bold text-[#1A1A1A]">
-              {property.projectedReturn}
-            </p>
-          </div>
-        </div>
-
-        {showProgress ? (
-          <div className="mt-4">
-            <div className="h-1.5 overflow-hidden rounded-full bg-[#EFEFEF]">
+        {stats.length > 0 ? (
+          <div className="mt-3 flex items-stretch overflow-hidden rounded-md bg-[#F7F7F7]">
+            {stats.map((stat, index) => (
               <div
-                className={`h-full rounded-full ${badge.bar}`}
-                style={{ width: `${property.fundedPercent}%` }}
-              />
-            </div>
-            <p className="mt-1.5 text-[11px] font-medium text-[#888888]">
-              {property.fundedPercent}% Funded
-            </p>
+                key={`${stat.label}-${stat.value}`}
+                className={cn(
+                  'flex min-w-0 flex-1 flex-col items-center px-2 py-2 text-center',
+                  index > 0 && 'border-l border-[#E8E8E8]'
+                )}
+              >
+                <p className="w-full truncate text-sm font-bold text-[#1A1A1A]">
+                  {stat.value}
+                </p>
+                <p className="mt-0.5 w-full truncate text-[10px] text-[#888888]">
+                  {stat.label}
+                </p>
+              </div>
+            ))}
           </div>
         ) : null}
 
-        <Link
-          href={property.href}
-          className="mt-4 block w-full rounded-lg bg-[#F3F3F3] py-2.5 text-center text-sm font-semibold text-[#1A1A1A] transition-colors hover:bg-[#EBEBEB]"
-        >
-          View Details
-        </Link>
+        <div className="mt-3 flex items-end justify-between gap-3">
+          <div className="min-w-0">
+            <p className="text-[10px] text-[#888888]">{priceLabel}</p>
+            <p className="mt-0.5 text-sm font-bold text-[#1A1A1A]">
+              {formatNairaCompact(property.minInvestment)}
+            </p>
+          </div>
+          <Link
+            href={property.href}
+            className="shrink-0 rounded-lg bg-[#F3F3F3] px-3.5 py-2 text-sm font-semibold text-[#1A1A1A] transition-colors hover:bg-[#EBEBEB]"
+          >
+            View Details
+          </Link>
+        </div>
       </div>
     </article>
   );

@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import {
@@ -23,6 +23,7 @@ import { resolvePropertyHighlightIcon } from '@/lib/property-highlight-icons';
 import { APP_URL } from '@/lib/constants';
 import { RichTextContent } from '@/components/shared/RichTextContent';
 import { WaitlistModal } from '@/components/shared/WaitlistModal';
+import { HotSellingBadge } from '@/components/shared/HotSellingBadge';
 import { cn } from '@/lib/utils';
 
 type PropertyDetailViewProps = {
@@ -31,6 +32,11 @@ type PropertyDetailViewProps = {
 
 export function PropertyDetailView({ property }: PropertyDetailViewProps) {
   const [waitlistOpen, setWaitlistOpen] = useState(false);
+  const [showStickyBar, setShowStickyBar] = useState(false);
+  const [stickyBarHeight, setStickyBarHeight] = useState(0);
+  const heroRef = useRef<HTMLElement>(null);
+  const stickyBarRef = useRef<HTMLDivElement>(null);
+
   const images = useMemo(() => {
     const sorted = [...(property.images ?? [])].sort((a, b) => {
       if (a.isPrimary !== b.isPrimary) return a.isPrimary ? -1 : 1;
@@ -64,9 +70,99 @@ export function PropertyDetailView({ property }: PropertyDetailViewProps) {
     (document) => document.category === 'title'
   );
 
+  useEffect(() => {
+    const hero = heroRef.current;
+    if (!hero) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setShowStickyBar(!entry.isIntersecting);
+      },
+      {
+        // Navbar height (~64px): sticky bar appears once the hero leaves below it
+        rootMargin: '-64px 0px 0px 0px',
+        threshold: 0,
+      }
+    );
+
+    observer.observe(hero);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const bar = stickyBarRef.current;
+    if (!bar) {
+      return;
+    }
+
+    const updateHeight = () => {
+      setStickyBarHeight(bar.getBoundingClientRect().height);
+    };
+
+    updateHeight();
+
+    const resizeObserver = new ResizeObserver(updateHeight);
+    resizeObserver.observe(bar);
+    return () => resizeObserver.disconnect();
+  }, []);
+
+  const navbarOffset = 64;
+  const sidebarGap = 12;
+  const sidebarStickyTop = showStickyBar
+    ? navbarOffset + stickyBarHeight + sidebarGap
+    : 96;
+
   return (
     <>
-      <section className="bg-[#333D42] py-10 text-white md:py-12">
+      <div
+        ref={stickyBarRef}
+        className={cn(
+          'fixed inset-x-0 top-16 z-40 border-b border-[#E8E8E8] bg-white/95 shadow-[0_4px_20px_rgba(0,0,0,0.06)] backdrop-blur-md transition-all duration-200',
+          showStickyBar
+            ? 'translate-y-0 opacity-100'
+            : 'pointer-events-none -translate-y-2 opacity-0'
+        )}
+        aria-hidden={!showStickyBar}
+      >
+        <div className="mx-auto flex max-w-[1200px] items-center justify-between gap-4 px-4 py-3 md:px-6 lg:px-8">
+          <div className="min-w-0">
+            <div className="mb-1 flex flex-wrap items-center gap-1.5">
+              <span
+                className={cn(
+                  'rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white',
+                  badge.bg
+                )}
+              >
+                {property.investmentModelTypeLabel}
+              </span>
+              {property.isHotSelling ? <HotSellingBadge size={20} /> : null}
+              {property.isNewListing ? (
+                <span className="rounded-full bg-[#F3F3F3] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-[#1A1A1A]">
+                  New
+                </span>
+              ) : null}
+            </div>
+            <p className="truncate text-sm font-bold text-[#1A1A1A] md:text-base">
+              {property.title}
+            </p>
+            <p className="mt-0.5 flex min-w-0 items-center gap-1 text-xs text-[#888888]">
+              <RiMapPinLine className="h-3.5 w-3.5 shrink-0 text-[#E55820]" />
+              <span className="truncate">{property.location}</span>
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setWaitlistOpen(true)}
+            className="shrink-0 rounded-md bg-[#E55820] px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-[#C44A15] md:text-sm"
+          >
+            Join waitlist
+          </button>
+        </div>
+      </div>
+
+      <section ref={heroRef} className="bg-[#333D42] py-10 text-white md:py-12">
         <div className="mx-auto max-w-[1200px] px-4 md:px-6 lg:px-8">
           <Link
             href="/marketplace"
@@ -84,11 +180,7 @@ export function PropertyDetailView({ property }: PropertyDetailViewProps) {
             >
               {property.investmentModelTypeLabel}
             </span>
-            {property.isHotSelling ? (
-              <span className="rounded-full bg-black/40 px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-white">
-                Hot
-              </span>
-            ) : null}
+            {property.isHotSelling ? <HotSellingBadge size={24} /> : null}
             {property.isNewListing ? (
               <span className="rounded-full bg-white px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-[#1A1A1A]">
                 New
@@ -278,7 +370,10 @@ export function PropertyDetailView({ property }: PropertyDetailViewProps) {
             ) : null}
           </div>
 
-          <aside className="lg:sticky lg:top-24 lg:self-start">
+          <aside
+            className="lg:sticky lg:self-start"
+            style={{ top: sidebarStickyTop }}
+          >
             <div className="rounded-2xl border border-[#E8E8E8] bg-white p-5 shadow-[0_8px_30px_rgba(0,0,0,0.04)] md:p-6">
               <p className="text-sm text-[#888888]">
                 {property.investmentModelType === 'outright'
@@ -312,18 +407,26 @@ export function PropertyDetailView({ property }: PropertyDetailViewProps) {
                 </div>
               </div>
 
-              <div className="mt-5">
-                <div className="mb-1.5 flex items-center justify-between text-xs text-[#888888]">
-                  <span>{property.progressLabel || 'Funding progress'}</span>
-                  <span>{fundedPercent}%</span>
+              {property.investmentModelType !== 'outright' &&
+              property.investmentModelType !== 'land_banking' &&
+              property.investmentModelType !== 'save_to_own' ? (
+                <div className="mt-5">
+                  <div className="mb-1.5 flex items-center justify-between text-xs text-[#888888]">
+                    <span>
+                      {property.investmentModelType === 'fractional'
+                        ? 'Completion rate'
+                        : property.progressLabel || 'Funding progress'}
+                    </span>
+                    <span>{fundedPercent}%</span>
+                  </div>
+                  <div className="h-2 overflow-hidden rounded-full bg-[#EFEFEF]">
+                    <div
+                      className={cn('h-full rounded-full', badge.bar)}
+                      style={{ width: `${fundedPercent}%` }}
+                    />
+                  </div>
                 </div>
-                <div className="h-2 overflow-hidden rounded-full bg-[#EFEFEF]">
-                  <div
-                    className={cn('h-full rounded-full', badge.bar)}
-                    style={{ width: `${fundedPercent}%` }}
-                  />
-                </div>
-              </div>
+              ) : null}
 
               <dl className="mt-5 space-y-2 text-sm">
                 <div className="flex justify-between gap-3">
