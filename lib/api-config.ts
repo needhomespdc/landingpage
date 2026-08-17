@@ -1,4 +1,4 @@
-const DEFAULT_API_BASE_URL = 'https://api.needhomes.ng/api';
+const DEFAULT_API_BASE_URL = 'https://api.needhomespdc.com/api';
 
 function normalizeBaseUrl(url: string): string {
   return url.replace(/\/+$/, '');

@@ -6,6 +6,7 @@ import { LdrsProvider } from '@/providers/LdrsProvider';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import WhatsappFloater from '@/components/layout/WhatsappFloater';
+import { CookieConsentBanner } from '@/components/layout/CookieConsentBanner';
 import './globals.css';
 
 
@@ -31,6 +32,10 @@ export const metadata: Metadata = {
     locale: 'en_NG',
   },
   robots: { index: true, follow: true },
+  icons: {
+    icon: [{ url: '/logo/app_icon.png', type: 'image/png' }],
+    apple: '/logo/app_icon.png',
+  },
 };
 
 
@@ -49,6 +54,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </ReduxProvider>
 
         <WhatsappFloater />
+        <CookieConsentBanner />
       </body>
     </html>
   );

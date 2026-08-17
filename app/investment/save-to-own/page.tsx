@@ -1,6 +1,11 @@
 import type { Metadata } from 'next';
 import { RiCalendarLine, RiTimeLine, RiPriceTag2Line, RiSaveLine, RiLineChartLine, RiHeartLine } from 'react-icons/ri';
 import { InvestmentPageTemplate } from '@/components/shared/InvestmentPageTemplate';
+import { InvestmentDarkHero } from '@/components/sections/investment/InvestmentDarkHero';
+import { InvestmentDarkCta } from '@/components/sections/investment/InvestmentDarkCta';
+import { SaveToOwnAbout } from '@/components/sections/save-to-own/SaveToOwnAbout';
+import { SaveToOwnHowItWorks } from '@/components/sections/save-to-own/SaveToOwnHowItWorks';
+import { SaveToOwnBenefits } from '@/components/sections/save-to-own/SaveToOwnBenefits';
 
 export const metadata: Metadata = { title: 'Save to Own' };
 
@@ -43,8 +48,27 @@ export default function SaveToOwnPage() {
       benefitsList={benefits}
       sideImage="/images/properties/save-to-own.jpg"
       sideImageAlt="House model beside a jar of coins representing save to own"
-      ctaTitle="Ready to Start Saving for Your Dream Home?"
-      ctaSubtitle="Join thousands who are achieving property ownership through our flexible save-to-own plans"
+      ctaTitle="Ready to Start Saving Toward Ownership?"
+      ctaSubtitle="Join people who are paying gradually toward a property and becoming full owners"
+      customHero={
+        <InvestmentDarkHero
+          badge="Save to Own"
+          titleLine1="Pay gradually toward a home"
+          titleBeforeRotate="and own it"
+          rotatingWords={['fully', 'flexibly', 'confidently']}
+          titleAfterRotate="."
+          subtitle="Choose a verified property, save at your own pace with a flexible plan, and become the full owner when your payments are complete."
+        />
+      }
+      customAfterHero={<SaveToOwnAbout />}
+      customHowItWorks={<SaveToOwnHowItWorks />}
+      customKeyBenefits={<SaveToOwnBenefits />}
+      customCta={
+        <InvestmentDarkCta
+          title="Ready to Start Saving Toward Ownership?"
+          subtitle="Join people who are paying gradually toward a property and becoming full owners"
+        />
+      }
     />
   );
 }

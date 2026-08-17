@@ -1,6 +1,4 @@
 import Image from 'next/image';
-import Link from 'next/link';
-import { RiArrowRightLine } from 'react-icons/ri';
 
 export function AboutStory() {
   return (
@@ -39,13 +37,6 @@ export function AboutStory() {
               start, invest, and move closer to property ownership.
             </p>
           </div>
-          <Link
-            href="/leadership"
-            className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#E55820] transition-colors hover:text-[#C44A15]"
-          >
-            Learn More About Us
-            <RiArrowRightLine className="h-4 w-4" aria-hidden />
-          </Link>
         </div>
 
         <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl">
