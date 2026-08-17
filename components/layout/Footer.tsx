@@ -205,13 +205,21 @@ export function Footer() {
           <p className="text-sm text-gray-500">
             © 2026 Needhomes Property Investment Limited. All rights reserved.
           </p>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
             <Link href="/privacy-policy" className="text-sm text-gray-500 transition-colors hover:text-gray-300">
               Privacy Policy
             </Link>
             <span className="text-gray-600">•</span>
             <Link href="/terms" className="text-sm text-gray-500 transition-colors hover:text-gray-300">
               Terms and Conditions
+            </Link>
+            <span className="text-gray-600">•</span>
+            <Link href="/account-deactivation" className="text-sm text-gray-500 transition-colors hover:text-gray-300">
+              Deactivate account
+            </Link>
+            <span className="text-gray-600">•</span>
+            <Link href="/data-deletion" className="text-sm text-gray-500 transition-colors hover:text-gray-300">
+              Request data deletion
             </Link>
           </div>
         </div>

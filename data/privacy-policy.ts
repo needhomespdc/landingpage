@@ -92,7 +92,8 @@ export const privacyPolicyContent = {
         'Object to or restrict certain processing activities.',
         'Request data portability where applicable.',
         'Lodge a complaint with a relevant data protection authority.',
-        'To exercise your rights, contact us using the details in the Contact section below.',
+        'To request deletion of your account and associated personal data, use https://needhomespdc.com/data-deletion or contact us using the details in the Contact section below.',
+        'To temporarily deactivate your account without deleting data, use https://needhomespdc.com/account-deactivation.',
       ],
     },
     {

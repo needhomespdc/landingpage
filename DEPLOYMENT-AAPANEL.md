@@ -1,18 +1,26 @@
 # Deploy NeedHomes Landing with aaPanel
 
-Guide for deploying the Next.js landing site (`landing/`) on a VPS using [aaPanel](https://www.aapanel.com/).
+Guide for deploying **only** the Next.js marketing site (`landing/`) on a VPS using [aaPanel](https://www.aapanel.com/).
 
-**Stack:** Next.js 15 (Node server) → reverse proxy (Nginx) → SSL
+**Assumes:** The NeedHomes backend API is already live (e.g. `https://api.needhomespdc.com/api`). This guide does not cover API, database, or Redis setup.
+
+**Stack:** Next.js 15 (Node server) → Nginx reverse proxy → Let's Encrypt SSL
+
+Example landing domain: `https://needhomespdc.com` or `https://www.needhomespdc.com`
+
+This is **not** a static export. The site runs `next start` behind Nginx (server components, `/api/waitlist`, image optimization).
 
 ---
 
 ## 1. Server prerequisites
 
 - Ubuntu 20.04 / 22.04 (or similar) VPS
-- Domain pointed to the server IP (A record), e.g. `needhomes.ng` or `www.needhomes.ng`
+- **2 GB RAM minimum** (4 GB safer for `npm run build`)
+- Domain A record pointing at the server IP
 - aaPanel installed and accessible
+- SSH access
 
-If aaPanel is not installed yet:
+If aaPanel is not installed:
 
 ```bash
 URL=https://www.aapanel.com/script/install_7.0_en.sh && curl -sSO $URL && bash install_7.0_en.sh
@@ -27,21 +35,29 @@ Open **App Store** and install:
 | Software | Purpose |
 |----------|---------|
 | **Nginx** | Reverse proxy + SSL |
-| **Node.js Version Manager** (or Node.js) | Run Next.js |
-| **PM2 Manager** (optional but recommended) | Keep the app running |
-| **Git** (via Softaculous / SSH) | Pull code from the repo |
+| **Node.js Version Manager** | Run Next.js |
+| **PM2 Manager** | Keep the site running after reboot |
+| **Git** | Pull from the repo (or upload a ZIP) |
 
 ### Node.js version
 
 1. Open **Node.js Version Manager**
-2. Install **Node.js 20 LTS** (or newer; project uses Next 15)
-3. Set it as the default version
+2. Install **Node.js 20 LTS** (or newer)
+3. Set it as the default
 
 Verify over SSH:
 
 ```bash
-node -v   # e.g. v20.x.x
+node -v   # v20.x.x or newer
 npm -v
+```
+
+If `node` is missing in SSH:
+
+```bash
+export PATH=/www/server/nodejs/v20.*/bin:$PATH
+hash -r
+node -v
 ```
 
 ---
@@ -50,18 +66,15 @@ npm -v
 
 1. Go to **Website** → **Add site**
 2. Set:
-   - **Domain:** your landing domain (e.g. `needhomes.ng`)
-   - **Root directory:** leave default for now (Nginx will proxy to Node)
-   - **PHP:** Pure static / none (not needed)
+   - **Domain:** `needhomespdc.com` (add `www.needhomespdc.com` as an alias if needed)
+   - **PHP:** none / pure static
 3. Create the site
 
-You will reverse-proxy this site to the Next.js process in a later step.
+Nginx will proxy this domain to the Next.js process in a later step.
 
 ---
 
-## 4. Upload / clone the project
-
-SSH into the server (or use aaPanel **Terminal**).
+## 4. Get the landing code on the server
 
 Suggested path:
 
@@ -72,44 +85,54 @@ cd /www/wwwroot/needhomes-landing
 
 ### Option A — Git clone
 
+If the repo is a monorepo, clone and use the `landing/` folder:
+
 ```bash
-git clone <YOUR_REPO_URL> .
-# If the landing app lives in a monorepo subfolder:
-# git clone <YOUR_REPO_URL> repo && cd repo/landing
+git clone <YOUR_REPO_URL> repo
+cd repo/landing
+ls package.json app next.config.ts
 ```
+
+Or clone only what you need into the app root so `package.json` is directly in `/www/wwwroot/needhomes-landing`.
 
 ### Option B — Upload ZIP
 
-1. Zip the `landing/` folder locally (exclude `node_modules` and `.next`)
-2. Upload via aaPanel **Files** to `/www/wwwroot/needhomes-landing`
-3. Extract on the server
+1. Zip the `landing/` folder locally (exclude `node_modules`, `.next`, `.env*`)
+2. Upload via aaPanel **Files**
+3. Extract so `package.json` is in `/www/wwwroot/needhomes-landing`
 
-Ensure the directory that contains `package.json` is your app root (e.g. `/www/wwwroot/needhomes-landing`).
+The rest of this guide uses:
+
+```text
+/www/wwwroot/needhomes-landing
+```
 
 ---
 
-## 5. Configure environment variables
+## 5. Environment variables
 
-In the app root, create `.env.production` (or `.env.local`):
+Point the landing site at your **existing** live API. Set these **before** `npm run build` — `NEXT_PUBLIC_*` values are baked in at build time.
 
 ```bash
 cd /www/wwwroot/needhomes-landing
 nano .env.production
 ```
 
-Example (adjust to your live URLs):
-
 ```env
-NEXT_PUBLIC_API_URL=https://api.needhomes.ng/api
+NEXT_PUBLIC_API_URL=https://api.needhomespdc.com/api
 NEXT_PUBLIC_APP_URL=https://app.needhomespdc.com
 ```
 
-Notes:
+| Variable | Purpose |
+|----------|---------|
+| `NEXT_PUBLIC_API_URL` | Your live backend API base, **including** `/api` |
+| `NEXT_PUBLIC_APP_URL` | Investor app URL used by CTAs |
 
-- `NEXT_PUBLIC_*` values are baked in at **build** time — set them **before** `npm run build`
-- Do not point `NEXT_PUBLIC_API_URL` at the Next.js site itself; it must be the backend API base (including `/api`)
+Important:
 
-Protect the file:
+- Do **not** point `NEXT_PUBLIC_API_URL` at this Next.js site
+- Use your real live API URL (same one the mobile app and admin use)
+- See `landing/.env.example` for reference
 
 ```bash
 chmod 600 .env.production
@@ -122,78 +145,75 @@ chmod 600 .env.production
 ```bash
 cd /www/wwwroot/needhomes-landing
 
-# Use the Node version managed by aaPanel if needed
-# export PATH=/www/server/nodejs/v20.x.x/bin:$PATH
-
 npm ci
-# or: npm install
-
 npm run build
 ```
 
-A successful build creates the `.next/` folder.
+A successful build creates `.next/`.
+
+If the build is killed (`Killed`, exit 137), add swap or use a larger VPS:
+
+```bash
+fallocate -l 2G /swapfile
+chmod 600 /swapfile
+mkswap /swapfile
+swapon /swapfile
+```
 
 ---
 
-## 7. Run the app with PM2
+## 7. Run the landing app with PM2
 
-Choose a port that is free on the server (example: **3001**).
+Use a local port that is **not** already taken by the API or other apps. Example: **3001**.
 
 ```bash
 cd /www/wwwroot/needhomes-landing
 
-# Start Next.js in production mode
-pm2 start npm --name "needhomes-landing" -- start -- -p 3001
+pm2 start npm --name "needhomes-landing" -- start -- -H 127.0.0.1 -p 3001
 
-# Persist across reboots
 pm2 save
 pm2 startup
 ```
 
-Useful PM2 commands:
+Useful commands:
 
 ```bash
 pm2 status
 pm2 logs needhomes-landing
 pm2 restart needhomes-landing
+curl -I http://127.0.0.1:3001
 ```
 
 ### Alternative: aaPanel Node Project
 
 1. **Website** → **Node Project** → **Add Node project**
-2. Set:
-   - Project path: `/www/wwwroot/needhomes-landing`
-   - Startup file / command: `npm` with args `start -- -p 3001`  
-     (or use `node_modules/next/dist/bin/next` with `start -p 3001`)
-   - Port: `3001`
-   - Package manager: npm
-3. Run **Install** / **Build** if the UI offers it, then start the project
+2. Project path: `/www/wwwroot/needhomes-landing`
+3. Start command: `npm start -- -H 127.0.0.1 -p 3001`
+4. Port: `3001`
 
-Either PM2 or aaPanel Node Project is fine — pick one, not both on the same port.
+Use **either** PM2 **or** aaPanel Node Project — not both on the same port.
+
+Keep the app bound to `127.0.0.1`. Only Nginx should be public.
 
 ---
 
-## 8. Reverse proxy with Nginx (aaPanel)
+## 8. Reverse proxy with Nginx
 
-Point the website domain at the Node process.
-
-1. **Website** → your site → **Settings** → **Reverse proxy**
+1. **Website** → your landing site → **Settings** → **Reverse proxy**
 2. **Add reverse proxy:**
    - **Proxy name:** `landing`
    - **Target URL:** `http://127.0.0.1:3001`
-   - **Send domain:** `$host` (default is fine)
+   - **Send domain:** `$host`
 3. Save
 
-### Optional: edit Nginx config manually
-
-If you prefer raw config (**Website** → **Config**), a minimal proxy block looks like:
+Optional manual config (**Website** → **Config**):
 
 ```nginx
 location / {
     proxy_pass http://127.0.0.1:3001;
     proxy_http_version 1.1;
     proxy_set_header Upgrade $http_upgrade;
-    proxy_set_header Connection 'upgrade';
+    proxy_set_header Connection "upgrade";
     proxy_set_header Host $host;
     proxy_set_header X-Real-IP $remote_addr;
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -202,52 +222,49 @@ location / {
 }
 ```
 
-Reload Nginx after changes (aaPanel does this when you save, or run `nginx -s reload`).
-
 ---
 
 ## 9. Enable SSL
 
 1. **Website** → your site → **SSL**
-2. Choose **Let's Encrypt**
-3. Select the domain(s), apply, and enable **Force HTTPS**
+2. **Let's Encrypt** → select your domain(s)
+3. Enable **Force HTTPS**
 
-Confirm DNS A records already point to this server before requesting the certificate.
+DNS must already point at this server.
 
 ---
 
-## 10. Firewall / security group
+## 10. Firewall
 
-Allow inbound:
+Allow **80** and **443** publicly. Do **not** expose port **3001**.
 
-| Port | Purpose |
-|------|---------|
-| 80 | HTTP (Let's Encrypt + redirect) |
-| 443 | HTTPS |
-| 22 | SSH |
-| 8888 (or your aaPanel port) | Panel access — restrict by IP if possible |
-
-Do **not** expose port `3001` publicly; only Nginx should reach it on localhost.
-
-In aaPanel: **Security** → open 80/443. Also open the same ports on your cloud provider firewall (AWS / DigitalOcean / Contabo / etc.).
+Open the same ports in your cloud provider firewall if applicable.
 
 ---
 
 ## 11. Verify deployment
 
-1. Open `https://your-domain.com`
-2. Check home, investment pages, marketplace, and images
-3. Confirm API calls hit `NEXT_PUBLIC_API_URL` (browser Network tab)
-4. Check process health:
+1. Open `https://needhomespdc.com` (or your domain)
+2. Check home, investment pages, marketplace, contact, images
+3. Featured properties load from the live API (browser Network tab → requests to `api.needhomespdc.com`)
+4. Waitlist form works (`POST /api/waitlist` on this Next app)
+5. Process health:
 
 ```bash
 pm2 status
 curl -I http://127.0.0.1:3001
+curl -I https://needhomespdc.com
+```
+
+If marketplace data is empty, confirm `NEXT_PUBLIC_API_URL` was set before build and that the live API responds:
+
+```bash
+curl -I https://api.needhomespdc.com/api/health
 ```
 
 ---
 
-## 12. Updating the site (redeploy)
+## 12. Updating the landing site (redeploy)
 
 ```bash
 cd /www/wwwroot/needhomes-landing
@@ -260,11 +277,11 @@ npm run build
 pm2 restart needhomes-landing
 ```
 
-If you changed `.env.production` / any `NEXT_PUBLIC_*` variable, always rebuild before restarting.
+Rebuild whenever you change `.env.production` or any `NEXT_PUBLIC_*` variable.
 
 ---
 
-## 13. Optional: simple deploy script
+## 13. Optional deploy script
 
 Save as `/www/wwwroot/needhomes-landing/deploy.sh`:
 
@@ -279,7 +296,7 @@ npm ci
 npm run build
 pm2 restart needhomes-landing
 
-echo "Deploy complete."
+echo "Landing deploy complete."
 ```
 
 ```bash
@@ -293,42 +310,39 @@ chmod +x deploy.sh
 
 | Issue | What to check |
 |-------|----------------|
-| 502 Bad Gateway | Is PM2/Node running? `pm2 status`. Is the proxy port correct (`3001`)? |
-| Site shows old content | Rebuild (`npm run build`) then `pm2 restart` |
-| Env vars ignored | `NEXT_PUBLIC_*` must be set **before** build |
-| Images from Cloudinary fail | Confirm `res.cloudinary.com` is allowed (already in `next.config.ts`) |
-| Permission errors | App files owned by a user Nginx/Node can read; avoid running as root long-term |
-| Build OOM | Add swap or use a larger VPS; Next builds need enough RAM |
+| 502 Bad Gateway | `pm2 status`, proxy port `3001`, `curl -I http://127.0.0.1:3001` |
+| Old content after deploy | `npm run build` then `pm2 restart needhomes-landing` |
+| Env vars not applied | Set `NEXT_PUBLIC_*` **before** build, then rebuild |
+| Marketplace empty | `NEXT_PUBLIC_API_URL` points at live API; API health check passes |
+| Build OOM | Add swap or more RAM |
+| Port in use | Pick another port and update Nginx proxy target |
 
 Logs:
 
 ```bash
 pm2 logs needhomes-landing
-# Nginx error log (path may vary):
-tail -f /www/wwwlogs/your-domain.error.log
+tail -f /www/wwwlogs/needhomespdc.com.error.log
 ```
 
 ---
 
 ## Quick checklist
 
-- [ ] Domain DNS → server IP  
-- [ ] Nginx + Node 20 + PM2 installed in aaPanel  
-- [ ] Code in `/www/wwwroot/needhomes-landing`  
-- [ ] `.env.production` set  
+- [ ] Domain DNS → landing server IP  
+- [ ] Nginx + Node 20 + PM2 installed  
+- [ ] Landing code in `/www/wwwroot/needhomes-landing`  
+- [ ] `.env.production` points at live API (`NEXT_PUBLIC_API_URL`)  
 - [ ] `npm ci && npm run build` succeeded  
-- [ ] App running on `127.0.0.1:3001`  
-- [ ] Reverse proxy configured  
+- [ ] PM2 running on `127.0.0.1:3001`  
+- [ ] Nginx reverse proxy configured  
 - [ ] SSL + Force HTTPS enabled  
-- [ ] Site loads over HTTPS  
+- [ ] Site loads; marketplace pulls from live API  
 
 ---
 
-## Related env reference
+## Related files
 
-See `.env.example` in this folder:
-
-```env
-NEXT_PUBLIC_API_URL=https://api.needhomes.ng/api
-NEXT_PUBLIC_APP_URL=https://app.needhomespdc.com
-```
+| File | Purpose |
+|------|---------|
+| `landing/.env.example` | Env reference |
+| `landing/next.config.ts` | Cloudinary image allowlist |

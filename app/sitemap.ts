@@ -20,6 +20,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: '/investment/save-to-own',               priority: 0.9,  changeFrequency: 'monthly' as const },
     { url: '/privacy-policy',                       priority: 0.3,  changeFrequency: 'yearly' as const },
     { url: '/terms',                                priority: 0.3,  changeFrequency: 'yearly' as const },
+    { url: '/data-deletion',                        priority: 0.4,  changeFrequency: 'yearly' as const },
+    { url: '/delete-account',                       priority: 0.4,  changeFrequency: 'yearly' as const },
+    { url: '/account-deactivation',                 priority: 0.4,  changeFrequency: 'yearly' as const },
+    { url: '/deactivate-account',                   priority: 0.4,  changeFrequency: 'yearly' as const },
   ];
 
   return routes.map(({ url, priority, changeFrequency }) => ({
